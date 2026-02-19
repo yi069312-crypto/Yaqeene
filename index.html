@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يقين | تطبيقك الإسلامي الشامل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #064e3b;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #1e293b;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f1f5f9;
+            --primary: #34d399;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: background 0.3s ease;
+        }
+
+        header {
+            background: var(--primary); color: white;
+            padding: 15px 20px; display: flex;
+            justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+
+        #startScreen {
+            height: 100vh; width: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; position: fixed; top: 0; left: 0; z-index: 2000;
+        }
+
+        #startScreen h1 { font-size: 48px; margin-bottom: 10px; font-weight: 800; }
+        .enter-btn {
+            background: white; color: var(--primary);
+            padding: 15px 60px; border-radius: 50px;
+            font-size: 22px; font-weight: bold; border: none;
+            cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .page { display: none; animation: slideUp 0.4s ease-out; }
+        .page.active { display: block; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .main-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .menu-item {
+            background: var(--card); padding: 25px 15px;
+            border-radius: 20px; text-align: center; cursor: pointer;
+            box-shadow: var(--shadow); border: 1px solid rgba(0,0,0,0.05);
+        }
+        .menu-item span { font-weight: 700; font-size: 18px; }
+
+        .content-card { background: var(--card); padding: 20px; border-radius: 20px; margin-bottom: 15px; box-shadow: var(--shadow); }
+        .quran-view { font-family: 'Amiri', serif; font-size: 26px; line-height: 2.2; text-align: justify; padding: 20px; max-height: 60vh; overflow-y: auto; }
+        .surah-select, .tasbeeh-select { width: 100%; padding: 15px; border-radius: 12px; font-family: 'Tajawal'; font-size: 16px; margin-bottom: 20px; border: 2px solid var(--secondary); background: var(--card); color: var(--text); }
+
+        .tasbeeh-container { text-align: center; padding: 20px 0; }
+        .circle {
+            width: 200px; height: 200px;
+            border: 10px solid var(--secondary); border-radius: 50%;
+            margin: 0 auto 20px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; cursor: pointer;
+            background: var(--card); box-shadow: var(--shadow);
+        }
+        .circle h2 { font-size: 50px; margin: 0; }
+
+        .btn-back { background: #64748b; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; margin-bottom: 20px; font-weight: bold; }
+        .btn-reset { background: #ef4444; color: white; border: none; padding: 12px 30px; border-radius: 12px; cursor: pointer; font-weight: bold; }
+        .zikr-box { border-right: 4px solid var(--secondary); background: var(--bg); padding: 15px; margin-bottom: 10px; border-radius: 0 10px 10px 0; font-size: 17px; line-height: 1.6; position: relative;}
+        .zikr-box span { display: block; color: var(--secondary); font-weight: bold; font-size: 14px; margin-top: 5px; }
+
+        audio { width: 100%; margin-top: 15px; border-radius: 10px; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000; border-radius: 12px; margin-bottom: 15px; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        
+        .prayer-time-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee; }
+        .todo-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid #eee; }
+        #ramadanTimer { background: #f59e0b; color: #fff; padding: 10px; border-radius: 10px; margin-bottom: 15px; font-weight: bold; text-align: center; }
+    </style>
+</head>
+<body>
+
+<div id="startScreen">
+    <h1>يَقِين</h1>
+    <p>أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ</p>
+    <button class="enter-btn" onclick="startApp()">دخول التطبيق</button>
+</div>
+
+<header id="mainHeader" style="display: none;">
+    <span style="font-weight: 800; font-size: 22px;">🌙 يَقِين</span>
+    <button onclick="toggleDark()" style="background:none; border:none; font-size: 24px; cursor:pointer;">🌓</button>
+</header>
+
+<div class="container" id="appContent" style="display: none;">
+
+    <div id="homePage" class="page active">
+        <div id="ramadanTimer" style="display:none;"></div>
+        <div class="content-card" style="background: var(--primary); color: white; text-align: center; cursor: pointer;" onclick="showTafsir()">
+            <p id="dailyVerse">"فَإِنَّ مَعَ الْعُسْرِ يُسْرًا"</p>
+            <small id="tafsirText" style="display:none; font-size: 14px; opacity: 0.9;"></small>
+        </div>
+
+        <div class="main-menu">
+            <div class="menu-item" onclick="showPage('quranPage')" style="background-color: #e0f2f1; color: #00695c;">📖 <span>القرآن</span></div>
+            <div class="menu-item" onclick="showPage('azkarMorning')" style="background-color: #fff8e1; color: #f57f17;">🌅 <span>أذكار الصباح</span></div>
+            
+            <div class="menu-item" onclick="showPage('azkarEvening')" style="background-color: #efebe9; color: #5d4037;">🌇 <span>أذكار المساء</span></div>
+            <div class="menu-item" onclick="showPage('tasbeehPage')" style="background-color: #f3e5f5; color: #7b1fa2;">📿 <span>السبحة</span></div>
+            
+            <div class="menu-item" onclick="showPage('duaPage')" style="background-color: #e1f5fe; color: #0288d1;">🙏 <span>الأدعية</span></div>
+            <div class="menu-item" onclick="showPage('ramadanPage')" style="background-color: #fff3e0; color: #e65100;">⭐ <span>أهداف رمضان</span></div>
+            
+            <div class="menu-item" onclick="getPrayerTimes()" style="background-color: #f1f8e9; color: #33691e;">🕌 <span>مواقيت الصلاة</span></div>
+            <div class="menu-item" onclick="showPage('todoPage')" style="background-color: #e8f5e9; color: #2e7d32;">✅ <span>مهامي اليومية</span></div>
+            
+            <div class="menu-item" onclick="showPage('hifzPage')" style="grid-column: span 2; background-color: #ede7f6; color: #512da8;">💡 <span>نصائح الحفظ</span></div>
+            
+            <div class="menu-item" onclick="showPage('khatmaPage')" style="background-color: #fce4ec; color: #c2185b;">📖 <span>ختم القرآن</span></div>
+            <div class="menu-item" onclick="showComfortMessage()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white;">✨ <span>رسالة لقلبك</span></div>
+            
+            <div class="menu-item" onclick="showPage('faqPage')" style="background-color: #f9fbe7; color: #827717;">🌙 <span>فقه الصيام</span></div>
+            <div class="menu-item" onclick="setupNotifications()" id="notiBtn" style="background-color: #fafafa; border: 1px solid #ddd; color: #616161;">🔔 <span>التنبيهات</span></div>
+            
+            <div class="menu-item" onclick="showPage('hisnPage')" style="background-color: #e8eaf6; color: #303f9f;">🛡️ <span>اذكار المسلم</span></div>
+            <div class="menu-item" onclick="showPage('prophetsLibraryPage')" style="background: linear-gradient(135deg, #0d9488, #14b8a6); color: white;">🕌 <span>مكتبة القصص</span></div>
+            
+            <div class="menu-item" onclick="showPage('namesPage')" style="grid-column: span 2; background: linear-gradient(135deg, #ff9800, #ed6c02); color: white;">✨ <span>أسماء الله الحسنى</span></div>
+
+            <div class="menu-item" onclick="showPage('dreamsPage');" style="background-color: #f3e5f5; color: #7b1fa2;">
+                🌙 <span>تفسير الأحلام</span>
+            </div>
+        
+            <div style="grid-column: span 2; margin-top: 20px; padding: 15px; border-top: 1px dashed #ccc; text-align: center;">
+                <p style="margin: 0; font-size: 16px; color: #555; font-weight: bold;">
+                    ◻️ نسألكم دعوة حلوة لأصحاب فكرة وتنفيذ التطبيق ◻️
+                </p>
+                <p style="margin: 5px 0 0 0; font-size: 13px; color: #888;">عسى الله أن ينفعنا بها جميعاً</p>
+            </div>
+        </div>
+            
+            </div>
+        </div>
+    </div>
+
+    <div id="azkarMorning" class="page">
+        <button class="btn-back" onclick="showPage('homePage')">🔙 رجوع</button>
+        <h2 style="text-align: center;">🌅 أذكار الصباح</h2>
+        <div class="content-card">
+            <div class="zikr-box">اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ مَن ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ. <span>(مرة واحدة)</span></div>
+            <div class="zikr-box">
+                <b>سورة الإخلاص:</b> قُلْ هُوَ اللَّهُ أَحَدٌ ﴿١﴾ اللَّهُ الصَّمَدُ ﴿٢﴾ لَمْ يَلِدْ وَلَمْ يُولَدْ ﴿٣﴾ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ ﴿٤﴾
+                <br><br>
+                <b>سورة الفلق:</b> قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ﴿١﴾ مِن شَرِّ مَا خَلَقَ ﴿٢﴾ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ﴿٣﴾ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ﴿٤﴾ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ ﴿٥﴾
+                <br><br>
+                <b>سورة الناس:</b> قُلْ أَعُوذُ بِرَبِّ النَّاسِ ﴿١﴾ مَلِكِ النَّاسِ ﴿٢﴾ إِلَٰهِ النَّاسِ ﴿٣﴾ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ﴿٤﴾ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ﴿٥﴾ مِنَ الْجِنَّةِ وَالنَّاسِ ﴿٦﴾
+                <span>(3 مرات)</span>
+            </div>
+            <div class="zikr-box">اللهم بك أصبحنا، وبك أمسينا، وبك نحيا، وبك نموت، وإليك النشور.</div>
+            <div class="zikr-box">اللهم أنت ربي لا إله إلا أنت، خلقتني وأنا عبدك، وأنا على عهدك ووعدك ما استطعت اعوذُ بك من شر ما صنعت ابوء لك بنعمتك على وابوء بذنبي فاغفر لي ف انه لا يغفر الذنوب الا انت. <span>(مرة واحدة)</span></div>
+            <div class="zikr-box">بسم الله الذي لا يضر مع اسمه شيء في الأرض ولا في السماء وهو السميع العليم. <span>(3 مرات)</span></div>
+            <div class="zikr-box">رضيت بالله رباً، وبالإسلام ديناً، وبمحمد ﷺ نبياً. <span>(3 مرات)</span></div>
+            <div class="zikr-box">لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير. <span>(100 مرة)</span></div>
+            <div class="zikr-box">أستغفر الله وأتوب إليه. <span>(100 مرة)</span></div>
+            <div class="zikr-box">اللهم صل وسلم على نبينا محمد. <span>(10 مرات)</span></div>
+            <div class="zikr-box">اللهم إني أسألك العفو والعافية في الدنيا والآخرة...</div>
+        </div>
+    </div>
+
+    <div id="azkarEvening" class="page">
+        <button class="btn-back" onclick="showPage('homePage')">🔙 رجوع</button>
+        <h2 style="text-align: center;">🌇 أذكار المساء</h2>
+        <div class="content-card">
+            <div class="zikr-box">اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ مَن ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ. <span>(مرة واحدة)</span></div>
+            <div class="zikr-box">
+                <b>سورة الإخلاص:</b> قُلْ هُوَ اللَّهُ أَحَدٌ ﴿١﴾ اللَّهُ الصَّمَدُ ﴿٢﴾ لَمْ يَلِدْ وَلَمْ يُولَدْ ﴿٣﴾ وَلَمْ يَكُن لَّهُ كُفُوًا أَحَدٌ ﴿٤﴾
+                <br><br>
+                <b>سورة الفلق:</b> قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ﴿١﴾ مِن شَرِّ مَا خَلَقَ ﴿٢﴾ وَمِن شَرِّ غَاسِقٍ إِذَا وَقَبَ ﴿٣﴾ وَمِن شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ﴿٤﴾ وَمِن شَرِّ حَاسِدٍ إِذَا حَسَدَ ﴿٥﴾
+                <br><br>
+                <b>سورة الناس:</b> قُلْ أَعُوذُ بِرَبِّ النَّاسِ ﴿١﴾ مَلِكِ النَّاسِ ﴿٢﴾ إِلَٰهِ النَّاسِ ﴿٣﴾ مِن شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ﴿٤﴾ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ﴿٥﴾ مِنَ الْجِنَّةِ وَالنَّاسِ ﴿٦﴾
+                <span>(3 مرات)</span>
+            </div>
+            <div class="zikr-box">اللهم بك أمسينا، وبك أصبحنا، وبك نحيا، وبك نموت، وإليك المصير.</div>
+            <div class="zikr-box">اللهم أنت ربي لا إله إلا أنت، خلقتني وأنا عبدك، وأنا على عهدك ووعدك ما استطعت اعوذُ بك من شر ما صنعت ابوء لك بنعمتك على وابوء بذنبي فاغفر لي ف انه لا يغفر الذنوب الا انت. <span>(مرة واحدة)</span></div>
+            <div class="zikr-box">بسم الله الذي لا يضر مع اسمه شيء في الأرض ولا في السماء وهو السميع العليم. <span>(3 مرات)</span></div>
+            <div class="zikr-box">رضيت بالله رباً، وبالإسلام ديناً، وبمحمد ﷺ نبياً. <span>(3 مرات)</span></div>
+            <div class="zikr-box">أمسينا وأمسى الملك لله والحمد لله، لا إله إلا الله وحده لا شريك له...</div>
+            <div class="zikr-box">أعوذ بكلمات الله التامات من شر ما خلق. <span>(3 مرات)</span></div>
+            <div class="zikr-box">أستغفر الله وأتوب إليه. <span>(100 مرة)</span></div>
+            <div class="zikr-box">اللهم صل وسلم على نبينا محمد. <span>(10 مرات)</span></div>
+        </div>
+    </div>
+
+    <div id="duaPage" class="page">
+        <button class="btn-back" onclick="showPage('homePage')">🔙 رجوع</button>
+        <h2 style="text-align: center;">🙏 أدعية مشهورة</h2>
+        <div class="content-card">
+            <div class="zikr-box"><b>دعاء الهم والحزن:</b> "اللَّهُمَّ إني أعوذ بك من الهم والحزن، وأعوذ بك من العجز والكسل، وأعوذ بك من الجبن والبخل، وأعوذ بك من غلبة الدين وقهر الرجال."</div>
+            <div class="zikr-box"><b>دعاء الصباح والمساء:</b> "أصبحنا وأصبح الملك لله، والحمد لله، لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير."</div>
+            <div class="zikr-box"><b>دعاء قبل النوم:</b> "باسمك ربي وضعت جنبي، وبك أرفعته، فإن أمسكت نفسي فارحمها، وإن أرسلتها فاحفظها بما تحفظ به عبادك الصالحين."</div>
+            <div class="zikr-box"><b>دعاء الحاجة:</b> "لا إله إلا الله الحليم الكريم، سبحان الله رب العرش العظيم، الحمد لله رب العالمين، أسألك بكل اسم هو لك سميت به نفسك، أو أنزلته في كتابك، أو علمته أحدًا من خلقك، أو استأثرت به في علم الغيب عندك، أن تجعل القرآن ربيع قلبي، ونور صدري، وجلاء حزني، وذهاب همي."</div>
+        </div>
+    </div>
+
+    <div id="quranPage" class="page">
+        <button class="btn-back" onclick="showPage('homePage')">🔙 رجوع</button>
+        <select id="surahSelect" class="surah-select" onchange="getSurahData()">
+            <option value="">اختر السورة...</option>
+        </select>
+        <div id="audioContainer" class="content-card" style="display:none; text-align:center;">
+            <span id="audioTitle" style="font-weight:bold; display:block; margin-bottom:10px;"></span>
+            <audio id="surahAudio" controls><source src="" type="audio/mpeg"></audio>
+        </div>
+        <div id="quranBox" class="content-card quran-view">اختر سورة لتبدأ القراءة والاستماع...</div>
+    </div>
+
+    <div id="ramadanPage" class="page">
+        <button class="btn-back" onclick="showPage('homePage')">🔙 رجوع</button>
+        <h3 style="text-align: center;">🎯 أهداف رمضان (دورات لا تفوتك)</h3>
+        
+        <div class="content-card">
+            <h4>1- السيرة النبوية (أحمد عامر)</h4>
+            <p style="font-size: 14px;">هتغيرك بجد وتتمنى متخلصش وكلنا عارفين أسلوبه المتميز.</p>
+            <div class="video-container"><iframe src="https://www.youtube.com/embed/videoseries?list=PLATApN30c4aLXpHzO1GkEb9H0CeXaJFy9"></iframe></div>
+        </div>
+
+        <div class="content-card">
+            <h4>2- المعارك الكبرى (سمير مصطفى)</h4>
+            <p style="font-size: 14px;">ما يخلصش رمضان إلا وأنت مخلص سلسلة المعارك الكبرى.</p>
+            <div class="video-container"><iframe src="https://www.youtube.com/embed/videoseries?list=PL09AC5B8EC7B3803A"></iframe></div>
+        </div>
+
+        <div class="content-card">
+            <h4>3- ختمة تعارف (حازم شومان)</h4>
+            <p style="font-size: 14px;">هتعيش مع القرآن حرفياً، بتعرفك حاجات كتير عن السور والتدبر.</p>
+            <div class="video-container"><iframe src="https://www.youtube.com/embed/videoseries?list=PLVPp4tYPys9MtkoERFPfepEll78gK5oM8"></iframe></div>
+        </div>
+
+        <div class="content-card">
+            <h4>📝 أهدافي الخاصة</h4>
+            <textarea id="myGoals" style="width:100%; height:80px; padding:10px; border-radius:10px; border:1px solid #ddd;" placeholder="اكتب هنا ما تريد تحقيقه..."></textarea>
+            <button onclick="saveGoals()" style="margin-top:10px; width:100%; padding:10px; background:var(--primary); color:white; border:none; border-radius:10px;">حفظ الأهداف</button>
+        </div>
+    </div>
+
+    <div id="tasbeehPage" class="page">
+        <button class="btn-back" onclick="showPage('homePage')">🔙 رجوع</button>
+        <div class="tasbeeh-container">
+            <select id="tasbeehSelect" class="tasbeeh-select" onchange="changeZikr()">
+                <option value="سبحان الله">سبحان الله</option>
+                <option value="الحمد لله">الحمد لله</option>
+                <option value="الله أكبر">الله أكبر</option>
+                <option value="لا إله إلا الله">لا إله إلا الله</option>
+                <option value="استغفر الله">استغفر الله</option>
+                <option value="اللَّهُمَّ صلي علي محمد">اللَّهُمَّ صلي علي محمد</option>
+            </select>
+            <div class="circle" onclick="pressTasbeeh()"><h2 id="counter">0</h2><span id="tasbeehLabel">سبحان الله</span></div>
+            <button class="btn-reset" onclick="resetT()">تصفير</button>
+            <div id="tasbeehLog" class="content-card" style="margin-top: 20px; font-size: 16px; text-align: right;">
+                <h4 style="margin-top: 0; color: var(--secondary);">سجل التسبيح:</h4>
+                <div id="logItems"></div> </div>
+        </div>
+    </div>
+
+    <div id="prayerPage" class="page">
+        <button class="btn-back" onclick="showPage('homePage')">🔙 رجوع</button>
+        <h2>🕌 مواقيت الصلاة (القاهرة)</h2>
+        <div class="content-card" id="prayerTimesBox">جاري التحميل...</div>
+    </div>
+
+    <div id="todoPage" class="page">
+        <button class="btn-back" onclick="showPage('homePage')">🔙 رجوع</button>
+        <h2>✅ مهامي اليومية</h2>
+
+        <div class="content-card" style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <input type="text" id="todoInput" placeholder="أضف مهمة شخصية..." style="flex: 1; padding: 12px; border-radius: 12px; border: 2px solid var(--secondary); font-family: 'Tajawal'; background: var(--card); color: var(--text);">
+            <button onclick="addTodo()" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 12px; font-weight: bold; cursor: pointer;">إضافة</button>
+        </div>
+
+        <div class="content-card">
+            <div id="todoList">
+                <div class="todo-item">
+                    <input type="checkbox" id="m1" onchange="saveTasks()"> 
+                    <label for="m1">الصلوات الخمس في وقتها</label>
+                </div>
+                <div class="todo-item">
+                    <input type="checkbox" id="m2" onchange="saveTasks()"> 
+                    <label for="m2">أذكار الصباح والمساء</label>
+                </div>
+                <div class="todo-item">
+                    <input type="checkbox" id="m3" onchange="saveTasks()"> 
+                    <label for="m3">ورد القرآن الكريم</label>
+                </div>
+                <div class="todo-item">
+                    <input type="checkbox" id="m4" onchange="saveTasks()"> 
+                    <label for="m4">صلاة القيام</label>
+                </div>
+                
+                <hr style="opacity: 0.1; margin: 15px 0;">
+                
+                <div id="userTasks"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="hifzPage" class="page">
+        <button class="btn-back" onclick="showPage('homePage')">🔙 رجوع</button>
+        <h2>💡 نصائح الحفظ</h2>
+        <div class="content-card">
+            <ul>
+                <li>كرر الآية 10 مرات قبل الانتقال لما بعدها.</li>
+                <li>استمع للسورة بصوت قارئك المفضل كثيراً.</li>
+                <li>احفظ مع صديق لتشجيع بعضكما البعض.</li>
+            </ul>
+        </div>
+    </div>
+    <div id="todoPage" class="page">
+        <button class="btn-back" onclick="showPage('homePage')">🔙 رجوع</button>
+        <h2>✅ مهامي اليومية</h2>
+    
+        <div class="content-card" style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <input type="text" id="todoInput" placeholder="أضف مهمة جديدة..." style="flex: 1; padding: 10px; border-radius: 10px; border: 1px solid var(--secondary); font-family: 'Tajawal';">
+            <button onclick="addTodo()" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold;">إضافة</button>
+        </div>
+    
+        <div class="content-card">
+            <div id="todoList">
+                <div class="todo-item"><input type="checkbox"> <label>قراءة ورد القرآن</label></div>
+                <div class="todo-item"><input type="checkbox"> <label>أذكار الصباح والمساء</label></div>
+                <div class="todo-item"><input type="checkbox"> <label>الصلوات الخمس</label></div>
+                <div id="userTasks"></div> 
+            </div>
+        </div>
+    </div>
+    <div id="khatmaPage" class="page">
+        <button class="btn-back" onclick="showPage('homePage')">🔙 رجوع</button>
+        <h2 style="text-align: center;">📅 جدول ختم القرآن</h2>
+        
+        <div class="content-card">
+            <label>اختار عدد الختمات في الشهر:</label>
+            <select id="khatmaSelect" class="tasbeeh-select" onchange="generateKhatma()">
+                <option value="1">ختمة واحدة (4 صفحات كل صلاة)</option>
+                <option value="2">ختمتان (8 صفحات كل صلاة)</option>
+                <option value="3">3 ختمات (12 صفحة كل صلاة)</option>
+                <option value="4">4 ختمات (16 صفحة كل صلاة)</option>
+                <option value="5">5 ختمات (20 صفحة كل صلاة)</option>
+                <option value="10">10 ختمات (36 صفحة كل صلاة)</option>
+            </select>
+        </div>
+
+        <div id="khatmaResult">
+            </div>
+    </div>
+    <div id="faqPage" class="page">
+        <button class="btn-back" onclick="showPage('homePage')">🔙 رجوع</button>
+        <h2 style="text-align: center;">🌙 موسوعة فقه الصيام الشاملة</h2>
+        <div class="content-card" style="max-height: 75vh; overflow-y: auto; padding: 10px;">
+            
+            <h3 style="color: var(--primary); border-bottom: 2px solid; padding-bottom: 5px;">📍 قواعد عامة في المفطرات</h3>
+            <div class="zikr-box"><b>١. ضابط المفطرات:</b> كل ما دخل إلى الجوف (المعدة) عن طريق منفذ مفتوح (الفم، الأنف) وهو أكل أو شرب أو في معناهما.</div>
+            <div class="zikr-box"><b>٢. شروط الفطر:</b> لا يفطر الصائم إلا إذا فعل الشيء (عالماً) غير جاهل، و(ذاكراً) غير ناسٍ، و(مختاراً) غير مكره.</div>
+    
+            <h3 style="color: var(--primary); border-bottom: 2px solid; padding-bottom: 5px;">🏥 الطب والعيادات</h3>
+            <div class="zikr-box"><b>٣. بخاخ الربو:</b> لا يفطر؛ لأنه غاز مضغوط يذهب للرئة ولا يصل منه للمعدة إلا قدر يسير جداً مغفور عنه.</div>
+            <div class="zikr-box"><b>٤. الأقراص تحت اللسان:</b> (لأزمات القلب) لا تفطر؛ لأنها تُمتص في الفم ولا ينزل منها شيء للجوف.</div>
+            <div class="zikr-box"><b>٥. منظار المعدة:</b> لا يفطر إلا إذا صاحبه وضع سوائل أو محاليل مغذية.</div>
+            <div class="zikr-box"><b>٦. قطرة الأذن أو غسولها:</b> لا تفطر إلا إذا كان ثقب الأذن يصل للحلق.</div>
+            <div class="zikr-box"><b>٧. قطرة العين:</b> لا تفطر مطلقاً؛ لأن العين ليست منفذاً للجوف.</div>
+            <div class="zikr-box"><b>٨. إبر الأنسولين (السكر):</b> لا تفطر.</div>
+            <div class="zikr-box"><b>٩. إبر العضل والوريد:</b> غير المغذية لا تفطر، أما المغذية (الجلوكوز) فتفطر.</div>
+            <div class="zikr-box"><b>١٠. التخدير (البنج):</b> الموضعي لا يفطر، الكلي إذا استغرق كل النهار يفطر.</div>
+            <div class="zikr-box"><b>١١. التحاميل (اللبوس):</b> لا تفطر؛ لأن الدبر ليس منفذاً للتغذية.</div>
+            <div class="zikr-box"><b>١٢. التبرع بالدم:</b> لا يفطر على الراجح، لكن يُكره إن كان يضعف الصائم.</div>
+    
+            <h3 style="color: var(--primary); border-bottom: 2px solid; padding-bottom: 5px;">🦷 الفم والأنف</h3>
+            <div class="zikr-box"><b>١٣. غاز الأكسجين:</b> لا يفطر.</div>
+            <div class="zikr-box"><b>١٤. بخاخ الأنف:</b> يفطر إذا وصل للمعدة؛ لأن الأنف منفذ للجوف.</div>
+            <div class="zikr-box"><b>١٥. قلع الضرس:</b> لا يفطر، ويجب الحذر من بلع الدم.</div>
+            <div class="zikr-box"><b>١٦. السواك ومعجون الأسنان:</b> لا يفطران، بشرط الحذر الشديد من بلع المعجون.</div>
+            <div class="zikr-box"><b>١٧. بلع النخامة (البلغم):</b> لا يفطر إذا بلعها من حلقه، وتفطر إذا وصلت للفم ثم بلعها.</div>
+            <div class="zikr-box"><b>١٨. المضمضة والاستنشاق:</b> لا يفطران، ويُكره المبالغة فيهما للصائم.</div>
+    
+            <h3 style="color: var(--primary); border-bottom: 2px solid; padding-bottom: 5px;">🤰 النساء والأسرة</h3>
+            <div class="zikr-box"><b>١٩. الحامل والمرضع:</b> يجوز لهما الفطر إذا خافتا على أنفسهما أو الجنين، وعليهما القضاء فقط.</div>
+            <div class="zikr-box"><b>٢٠. تذوق الطعام:</b> يجوز للمرأة تذوق الطعام للحاجة بطرف لسانها مع بصقه ولا تفطر.</div>
+            <div class="zikr-box"><b>٢١. دم الحيض والنفاس:</b> يفطر بمجرد خروجه ولو قبل المغرب بلحظة.</div>
+    
+            <h3 style="color: var(--primary); border-bottom: 2px solid; padding-bottom: 5px;">✈️ السفر والأعذار</h3>
+            <div class="zikr-box"><b>٢٢. السفر المبيح للفطر:</b> هو السفر الطويل (حوالي ٨٠ كم فأكثر).</div>
+            <div class="zikr-box"><b>٢٣. متى يفطر المسافر؟</b> بعد مغادرة بنيان مدينته تماماً، ولا يجوز الفطر وهو لا يزال في بيته.</div>
+            <div class="zikr-box"><b>٢٤. من أفطر ناسياً:</b> يتم صومه ولا قضاء عليه ولا كفارة.</div>
+            <div class="zikr-box"><b>٢٥. الجنابة:</b> من أصبح جنباً فصومه صحيح ويغتسل ويصلي.</div>
+    
+            <h3 style="color: var(--primary); border-bottom: 2px solid; padding-bottom: 5px;">🧼 المعاصرة والمفارقات</h3>
+            <div class="zikr-box"><b>٢٦. غسيل الكلى:</b> يفطر (سواء البريتوني أو الدموي) لوجود مواد مغذية.</div>
+            <div class="zikr-box"><b>٢٧. العطر والبخور:</b> العطر لا يفطر، البخور استنشاقه عمداً يفطر (لأن له دخان يتكاثف).</div>
+            <div class="zikr-box"><b>٢٨. لصقات النيكوتين:</b> لا تفطر؛ لأنها تُمتص عبر الجلد وليست أكلاً.</div>
+            <div class="zikr-box"><b>٢٩. بلع الريق:</b> لا يفطر أبداً.</div>
+            <div class="zikr-box"><b>٣٠. القيء:</b> من استقاء عمداً أفطر، ومن غلبه القيء فلا يفطر.</div>
+            <p style="text-align: center; color: #64748b; font-size: 13px; margin-top: 20px;">
+                المصدر: دورة فقه الصيام - تلخيص المسائل الفقهية المعاصرة
+            </p>
+        </div>
+    </div>
+    
+    <div id="comfortModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:3000; align-items:center; justify-content:center;">
+        <div class="content-card" style="width:85%; max-width:400px; text-align:center; padding:30px;">
+            <h3 style="color:var(--accent);">✨ رسالة لقلبك</h3>
+            <p id="comfortText" style="font-family:'Amiri', serif; font-size:22px; line-height:1.6;"></p>
+            <button onclick="closeComfort()" style="background:var(--primary); color:white; border:none; padding:10px 30px; border-radius:10px;">الحمد لله</button>
+        </div>
+    </div>
+    <div id="hisnPage" class="page">
+        <button class="btn-back" onclick="showPage('homePage')">🔙 رجوع</button>
+        <h2 style="text-align: center;">🛡️ اذكار المسلم</h2>
+        
+        <div class="content-card" style="margin-bottom: 10px; padding: 10px;">
+            <input type="text" id="hisnSearch" placeholder="ابحث عن ذكر (سفر، نوم، لبس...)" onkeyup="searchHisn()" 
+                   style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--primary); font-family: 'Tajawal';">
+        </div>
+    
+        <div id="hisnContainer" class="content-card" style="max-height: 70vh; overflow-y: auto;">
+            </div>
+    </div>
+    <div id="namesPage" class="page">
+        <button class="btn-back" onclick="stopNamesAudio(); showPage('homePage')">🔙 رجوع</button>
+        
+        <div class="content-card" style="text-align: center;">
+            <h2 style="font-family: 'Amiri', serif; color: var(--primary); font-size: 28px;">✨ أسماء الله الحسنى ✨</h2>
+            
+            <div style="margin: 20px 0; padding: 15px; background: #fffbeb; border-radius: 15px; border: 1px solid #fcd34d;">
+                <button id="playNamesBtn" onclick="toggleNamesAudio()" style="background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 50px; cursor: pointer; font-weight: bold;">
+                    🎵 تشغيل الأنشودة
+                </button>
+                <audio id="namesAudio" src="https://files.catbox.moe/30pqrj.mp3"></audio> 
+            </div>
+    
+            <div id="namesGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px;">
+                </div>
+        </div>
+    </div>
+    <div id="prophetsLibraryPage" class="page">
+        <button class="btn-back" onclick="stopLibAudio(); showPage('homePage')">🔙 رجوع</button>
+        <div class="content-card">
+            <h2 style="text-align: center; font-family: 'Amiri', serif; color: var(--primary);">📖 قصص الأنبياء المصورة</h2>
+            
+            <select id="prophetSelector" onchange="loadExternalStory(this.value)" style="width: 100%; padding: 12px; border-radius: 10px; border: 2px solid var(--secondary); margin-bottom: 20px; font-family: 'Tajawal';">
+                <option value="">-- اختر نبي الله --</option>
+                <option value="adam">آدم عليه السلام</option>
+                <option value="noah">نوح عليه السلام</option>
+                <option value="ibrahim">إبراهيم عليه السلام</option>
+                <option value="mosa">موسي عليه السلام</option>
+                <option value="youssef">يوسف عليه السلام</option>
+            </select>
+    
+            <div id="libraryContent" style="display: none; text-align: center;">
+                <img id="lib-img" src="" style="width: 100%; border-radius: 15px; margin-bottom: 15px; box-shadow: var(--shadow);">
+                
+                <div style="background: #f1f5f9; padding: 15px; border-radius: 15px; margin-bottom: 15px;">
+                    <p style="margin-bottom: 10px; font-weight: bold;">🔊 استمع للقصة:</p>
+                    <audio id="lib-audio" controls style="width: 100%;"></audio>
+                </div>
+    
+                <div id="lib-text" style="text-align: right; line-height: 1.8; font-family: 'Amiri', serif; font-size: 20px; background: #fff; padding: 15px; border-radius: 10px; border: 1px solid #eee; white-space: pre-wrap;">
+                    </div>
+            </div>
+    
+            <div id="lib-loader" style="display: none; text-align: center; padding: 30px;">
+                <div style="font-size: 40px; animation: spin 1s linear infinite;">🔄</div>
+                <p>جاري تحميل القصة...</p>
+            </div>
+        </div>
+    </div>
+    <div id="dreamsPage" class="page">
+        <button class="btn-back" onclick="showPage('homePage')">🔙 رجوع</button>
+        <div class="content-card">
+            <h2 style="text-align: center; font-family: 'Amiri', serif; color: #7b1fa2; margin-bottom: 20px;">💭 موسوعة تفسير الأحلام</h2>
+            
+            <div id="dreamsList" style="max-height: 500px; overflow-y: auto; padding: 10px; background: #fff; border-radius: 12px; border: 1px solid #eee;">
+                </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function startApp() {
+        document.getElementById('startScreen').style.display = 'none';
+        document.getElementById('mainHeader').style.display = 'flex';
+        document.getElementById('appContent').style.display = 'block';
+        loadSurahNames();
+        updateRamadanTimer();
+        loadMyGoals();
+        loadDailyVerse();
+    }
+
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        window.scrollTo(0,0);
+    }
+
+    async function loadSurahNames() {
+        const select = document.getElementById('surahSelect');
+        try {
+            const r = await fetch('https://api.alquran.cloud/v1/surah');
+            const d = await r.json();
+            d.data.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.number; opt.text = s.number + ". " + s.name;
+                select.add(opt);
+            });
+        } catch(e) {}
+    }
+
+    async function getSurahData() {
+        const val = document.getElementById('surahSelect').value;
+        const select = document.getElementById('surahSelect');
+        if(!val) return;
+        const quranBox = document.getElementById('quranBox');
+        const audioContainer = document.getElementById('audioContainer');
+        const surahAudio = document.getElementById('surahAudio');
+        quranBox.innerText = "جاري التحميل...";
+        audioContainer.style.display = "block";
+        document.getElementById('audioTitle').innerText = "استماع إلى: " + select.options[select.selectedIndex].text;
+        surahAudio.src = `https://server8.mp3quran.net/afs/${val.padStart(3, '0')}.mp3`;
+
+        const localData = localStorage.getItem('surah_' + val);
+        if (localData) quranBox.innerHTML = localData + "<br><p style='color:green; font-size:12px;'>✓ تعمل بدون إنترنت</p>";
+        
+        try {
+            const r = await fetch(`https://api.alquran.cloud/v1/surah/${val}`);
+            const d = await r.json();
+            let txt = "";
+            d.data.ayahs.forEach(a => txt += a.text + ` <span style="color:var(--secondary)">﴿${a.numberInSurah}﴾</span> `);
+            localStorage.setItem('surah_' + val, txt);
+            quranBox.innerHTML = txt;
+        } catch(e) { if(!localData) quranBox.innerText = "تحتاج إنترنت لأول مرة."; }
+    }
+
+    function updateRamadanTimer() {
+        const diff = new Date("March 1, 2025").getTime() - new Date().getTime();
+        if (diff > 0) {
+            document.getElementById('ramadanTimer').innerText = `⏳ متبقي على رمضان: ${Math.floor(diff/(1000*60*60*24))} يوم`;
+            document.getElementById('ramadanTimer').style.display = "block";
+        }
+    }
+
+    function loadDailyVerse() {
+        const verses = ["فَإِنَّ مَعَ الْعُسْرِ يُسْرًا", "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ"];
+        document.getElementById('dailyVerse').innerText = verses[Math.floor(Math.random()*verses.length)];
+    }
+
+    function showTafsir() {
+        const t = document.getElementById('tafsirText');
+        t.innerText = "تفسير: الله يعدك باليسر والسكينة في ذكره.";
+        t.style.display = t.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function getPrayerTimes() {
+        showPage('prayerPage');
+        const box = document.getElementById('prayerTimesBox');
+        try {
+            const r = await fetch('https://api.aladhan.com/v1/timingsByCity?city=Cairo&country=Egypt&method=5');
+            const d = await r.json();
+            const t = d.data.timings;
+            box.innerHTML = `<div class="prayer-time-row"><span>الفجر</span><b>${t.Fajr}</b></div><div class="prayer-time-row"><span>الظهر</span><b>${t.Dhuhr}</b></div><div class="prayer-time-row"><span>العصر</span><b>${t.Asr}</b></div><div class="prayer-time-row"><span>المغرب</span><b>${t.Maghrib}</b></div><div class="prayer-time-row"><span>العشاء</span><b>${t.Isha}</b></div>`;
+        } catch(e) { box.innerText = "تعذر التحميل."; }
+    }
+
+    let count = localStorage.getItem('count') || 0;
+    document.getElementById('counter').innerText = count;
+    function pressTasbeeh() {
+    count++;
+    document.getElementById('counter').innerText = count;
+    localStorage.setItem('count', count);
+    
+    // إضافة الاهتزاز
+    if (navigator.vibrate) {
+        if (count % 33 === 0) {
+            // هزة قوية ومزدوجة عند الرقم 33
+            navigator.vibrate([100, 50, 100]); 
+        } else {
+            // هزة خفيفة جداً مع كل ضغطة لتحاكي السبحة الحقيقية
+            navigator.vibrate(30); 
+        }
+    }
+}
+    function resetT() { count = 0; document.getElementById('counter').innerText = 0; localStorage.setItem('count', 0); }
+    function changeZikr() {
+    const label = document.getElementById('tasbeehLabel');
+    const counterEl = document.getElementById('counter');
+    const logItems = document.getElementById('logItems');
+    
+    // 1. لو العداد أكبر من صفر، احفظ اللي فات في السجل
+    if (count > 0) {
+        const newItem = document.createElement('div');
+        newItem.className = 'zikr-box';
+        newItem.innerHTML = `${label.innerText}: <span>${count}</span>`;
+        
+        // يضيف الجديد فوق القديم
+        logItems.insertBefore(newItem, logItems.firstChild);
+    }
+
+    // 2. صفر العداد والذاكرة
+    count = 0;
+    counterEl.innerText = 0;
+    localStorage.setItem('count', 0);
+
+    // 3. غير الاسم للاسم الجديد اللي اخترته
+    label.innerText = document.getElementById('tasbeehSelect').value;
+}
+    function toggleDark() { document.body.classList.toggle('dark-mode'); }
+    function saveGoals() { localStorage.setItem('userGoals', document.getElementById('myGoals').value); alert("تم الحفظ!"); }
+    function loadMyGoals() { document.getElementById('myGoals').value = localStorage.getItem('userGoals') || ""; }
+    // 1. وظيفة إضافة مهمة جديدة مع زرار مسح
+    function addTodo() {
+        const input = document.getElementById('todoInput');
+        const taskText = input.value.trim();
+        
+        if (taskText === "") return;
+
+        const taskList = document.getElementById('userTasks');
+        const taskDiv = document.createElement('div');
+        taskDiv.className = 'todo-item';
+        taskDiv.style.display = 'flex';
+        taskDiv.style.alignItems = 'center';
+        taskDiv.style.gap = '10px';
+        
+        // الكود ده بيضيف المهمة ومعاها زرار الحذف (X) باللون الأحمر
+        taskDiv.innerHTML = `
+            <input type="checkbox" onchange="saveTasks()"> 
+            <label style="flex:1">${taskText}</label>
+            <span onclick="this.parentElement.remove(); saveTasks();" style="color:red; cursor:pointer; font-weight:bold; padding:0 10px;">✕</span>
+        `;
+        
+        taskList.appendChild(taskDiv);
+        input.value = "";
+        saveTasks();
+    }
+
+    // 2. وظيفة حفظ المهام وحالة (الصح) في ذاكرة الموبايل
+    function saveTasks() {
+        const userTasksCont = document.getElementById('userTasks');
+        // قبل ما نحفظ، بنعلم في الكود مين اللي واخد "صح" ومين لأ
+        const checkboxes = userTasksCont.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(box => {
+            if (box.checked) box.setAttribute('checked', 'checked');
+            else box.removeAttribute('checked');
+        });
+        
+        localStorage.setItem('myCustomTasks', userTasksCont.innerHTML);
+    }
+
+    // 3. وظيفة التحميل والتصفير اليومي (أهم جزء)
+    function loadTasks() {
+        const savedTasks = localStorage.getItem('myCustomTasks');
+        const lastDate = localStorage.getItem('lastUpdateDate');
+        const today = new Date().toLocaleDateString();
+
+        // تحميل المهام اللي المستخدم ضافها قبل كدة
+        if (savedTasks) {
+            document.getElementById('userTasks').innerHTML = savedTasks;
+        }
+
+        // لو التاريخ اتغير (بقينا في يوم جديد)
+        if (lastDate !== today) {
+            // شيل علامات الصح من المهام الأساسية والجديدة
+            const allCheckboxes = document.querySelectorAll('#todoList input[type="checkbox"]');
+            allCheckboxes.forEach(box => {
+                box.checked = false;
+                box.removeAttribute('checked');
+            });
+            
+            // حدث التاريخ لليوم الجديد واحفظ الحالة وهي فاضية
+            localStorage.setItem('lastUpdateDate', today);
+            saveTasks();
+        }
+    }
+
+    // 4. تحديث وظيفة البداية عشان تشغل التحميل أول ما يفتح
+    // (تأكد إن الوظيفة دي هي اللي بتناديها في زرار دخول التطبيق)
+    const originalStartApp = startApp;
+    startApp = function() {
+        if (typeof originalStartApp === 'function') originalStartApp();
+        loadTasks();
+    }
+    function generateKhatma() {
+        const khatmaCount = document.getElementById('khatmaSelect').value;
+        const resultDiv = document.getElementById('khatmaResult');
+        
+        // حساب عدد الصفحات بناءً على اختيار المستخدم (زي الصورة بالظبط)
+        let pages = khatmaCount * 4; 
+        if(khatmaCount == 10) pages = 36; // استثناء للـ 10 ختمات حسب الصورة
+
+        const times = [
+            { name: "الفجر", icon: "🌅" },
+            { name: "الظهر", icon: "☀️" },
+            { name: "العصر", icon: "🌇" },
+            { name: "المغرب", icon: "🌙" },
+            { name: "العشاء", icon: "🌌" }
+        ];
+
+        let html = `<div class="content-card" style="background: var(--primary); color: white; text-align: center; margin-bottom: 10px;">
+                        <strong>نظام الـ ${khatmaCount} ختمات:</strong> اقرأ ${pages} صفحات بعد كل صلاة
+                    </div>`;
+
+        times.forEach(time => {
+            html += `
+                <div class="zikr-box" style="display: flex; justify-content: space-between; align-items: center; padding: 20px;">
+                    <div>
+                        <strong>${time.icon} صلاة ${time.name}</strong>
+                        <p style="margin: 5px 0 0 0; font-size: 15px; opacity: 0.8;">ورد هذه الصلاة</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <span style="display: block; font-size: 22px; margin: 0;">${pages}</span>
+                        <small>صفحات</small>
+                    </div>
+                </div>`;
+        });
+
+        resultDiv.innerHTML = html;
+    }
+
+    // عشان الجدول يظهر أول ما يفتح الصفحة لأول مرة
+    window.addEventListener('load', () => {
+        if(document.getElementById('khatmaSelect')) generateKhatma();
+    });
+// 1. برمجة رسائل الطمأنينة
+const messages = [
+    "لَا تَخَفْ وَلَا تَحْزَنْ ۖ إِنَّا مُنَجُّوكَ",
+    "لَا تَدْرِي لَعَلَّ اللَّهَ يُحْدِثُ بَعْدَ ذَٰلِكَ أَمْرًا",
+    "وَلَسَوْفَ يُعْطِيكَ رَبُّكَ فَتَرْضَىٰ",
+    "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ",
+    "إِنَّ مَعَ الْعُسْرِ يُسْرًا",
+    "وَاصْبِرْ لِحُكْمِ رَبِّكَ فَإِنَّكَ بِأَعْيُنِنَا"
+];
+
+function showComfortMessage() {
+    const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+    document.getElementById('comfortText').innerText = "﴿ " + randomMsg + " ﴾";
+    document.getElementById('comfortModal').style.display = 'flex';
+}
+
+function closeComfort() {
+    document.getElementById('comfortModal').style.display = 'none';
+}
+
+// 2. برمجة التنبيهات الذكية
+function setupNotifications() {
+    if (!("Notification" in window)) {
+        alert("متصفحك لا يدعم التنبيهات");
+        return;
+    }
+
+    Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+            // تسجيل السيرفس وركر (عشان تشتغل والتطبيق مقفول)
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                document.getElementById('notiBtn').innerHTML = "✅ <span>التنبيهات تعمل</span>";
+                alert("تم تفعيل التنبيهات بنجاح! ستصلك حتى لو التطبيق مغلق (في بعض المتصفحات)");
+            });
+
+            // كود التنبيه الدوري
+            setInterval(() => {
+                const athkar = ["سبحان الله", "الحمد لله", "لا إله إلا الله", "اللهم صلِّ على محمد"];
+                const randomThikr = athkar[Math.floor(Math.random() * athkar.length)];
+                
+                // إرسال التنبيه
+                new Notification("ذكر الله", {
+                    body: randomThikr,
+                    icon: "logo.png", // حط مسار لوجو تطبيقك هنا
+                    badge: "logo.png"
+                });
+            }, 3600000); // كل ساعة
+        }
+    });
+}
+const hisnAthkar = [
+    { title: "دعاء السفر", text: "الله أكبر، الله أكبر، الله أكبر، سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ..." },
+    { title: "دعاء لبس الثوب", text: "الحمد لله الذي كساني هذا الثوب ورزقنيه من غير حول مني ولا قوة." },
+    { title: "ما يقال عند الغضب", text: "أعوذ بالله من الشيطان الرجيم." },
+    { title: "دعاء دخول الخلاء", text: "اللهم إني أعوذ بك من الخبث والخبائث." },
+    { title: "دعاء الخروج من المنزل", text: "باسم الله، توكلت على الله، ولا حول ولا قوة إلا بالله." },
+    { title: "دعاء الكرب", text: "لا إله إلا الله العظيم الحليم، لا إله إلا الله رب العرش العظيم..." },
+    { title: "دعاء الاستخارة", text: "اللهم إني أستخيرك بعلمك وأستقدرك بقدرتك..." }
+];
+
+function displayHisn(filter = "") {
+    const container = document.getElementById('hisnContainer');
+    container.innerHTML = "";
+    
+    const filtered = hisnAthkar.filter(item => item.title.includes(filter));
+    
+    filtered.forEach(item => {
+        const box = document.createElement('div');
+        box.className = 'zikr-box';
+        box.innerHTML = `<b>${item.title}</b><br><p style="margin-top:10px; font-size:16px;">${item.text}</p>`;
+        container.appendChild(box);
+    });
+}
+
+function searchHisn() {
+    const val = document.getElementById('hisnSearch').value;
+    displayHisn(val);
+}
+
+// تشغيل العرض الأول عند فتح الصفحة
+displayHisn();
+// قائمة أسماء الله الحسنى
+const allahNamesList = ["الرحمن", "الرحيم", "الملك", "القدوس", "السلام", "المؤمن", "المهيمن", "العزيز", "الجبار", "المتكبر", "الخالق", "البارئ", "المصور", "الغفار", "القهار", "الوهاب", "الرزاق", "الفتاح", "العليم", "القابض", "الباسط", "الخافض", "الرافع", "المعز", "المذل", "السميع", "البصير", "الحكم", "العدل", "اللطيف", "الخبير", "الحليم", "العظيم", "الغفور", "الشكور", "العلي", "الكبير", "الحفيظ", "المقيت", "الحسيب", "الجليل", "الكريم", "الرقيب", "المجيب", "الواسع", "الحكيم", "الودود", "المجيد", "الباعث", "الشهيد", "الحق", "الوكيل", "القوي", "المتين", "الولي", "الحميد", "المحصي", "المبدئ", "المعيد", "المحيي", "المميت", "الحي", "القيوم", "الواجد", "الماجد", "الواحد", "الأحد", "الصمد", "القادر", "المقتدر", "المقدم", "المؤخر", "الأول", "الآخر", "الظاهر", "الباطن", "الوالي", "المتعالي", "البر", "التواب", "المنتقم", "العفو", "الرؤوف", "مالك الملك", "ذو الجلال والإكرام", "المقسط", "الجامع", "الغني", "المغني", "المانع", "الضار", "النافع", "النور", "الهادي", "البديع", "الباقي", "الوارث", "الرشيد", "الصبور"];
+
+// وظيفة عرض الأسماء بخط حلو وتنسيق مربعات
+function displayAllahNames() {
+    const grid = document.getElementById('namesGrid');
+    if (grid) {
+        grid.innerHTML = allahNamesList.map(name => `
+            <div style="background: #fdf2f2; padding: 10px 5px; border-radius: 8px; font-size: 15px; font-weight: bold; border: 1px solid #fecaca; color: #991b1b; font-family: 'Amiri', serif; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                ${name}
+            </div>
+        `).join('');
+    }
+}
+
+// وظيفة تشغيل وإيقاف الصوت
+function toggleNamesAudio() {
+    const audio = document.getElementById('namesAudio');
+    const btn = document.getElementById('playNamesBtn');
+    if (audio.paused) {
+        audio.play();
+        btn.innerText = "⏸️ إيقاف الأنشودة";
+        btn.style.background = "#ef4444";
+    } else {
+        audio.pause();
+        btn.innerText = "🎵 تشغيل الأنشودة";
+        btn.style.background = "var(--accent)";
+    }
+}
+
+// إيقاف الصوت عند الرجوع للخلف
+function stopNamesAudio() {
+    const audio = document.getElementById('namesAudio');
+    if(audio) {
+        audio.pause();
+        audio.currentTime = 0;
+    }
+}
+
+// نداء الوظيفة عند تشغيل التطبيق لملء الأسماء
+window.addEventListener('DOMContentLoaded', displayAllahNames);
+
+// 1. قاعدة البيانات - هنا هتحط روابطك
+const storiesDatabase = {
+    "adam": {
+        img: "https://files.catbox.moe/dqyots.jpg", 
+        audio: "https://files.catbox.moe/jpknof.mp3", 
+        text: `في بداية الخلق، حين لم يكن في الأرض بشرٌ ولا حياة، خلق الله السماوات والأرض، ثم أراد أن يجعل في الأرض خليفة. فخلق أول إنسان، وهو آدم عليه السلام، من طينٍ شكّله بيده، ثم نفخ فيه من روحه، فدبّت فيه الحياة، وأصبح أول البشر.
+علّم الله آدم الأسماء كلها، وميّزه بالعلم، ثم أمر الملائكة أن يسجدوا له تكريمًا، فسجدوا جميعًا إلا واحدًا… كان من الجن، لكنه كان يعبد الله مع الملائكة، اسمه إبليس. رفض السجود تكبرًا وقال: "أنا خيرٌ منه، خلقتني من نار وخلقته من طين". فطرده الله من رحمته، ولعنه إلى يوم القيامة.
+لكن إبليس لم يهدأ، وامتلأ قلبه بالحقد، وأقسم أن يضل آدم وذريته، فقال: "لأغوينهم أجمعين".
+أسكن الله آدم الجنة، مكانًا مليئًا بالراحة والنعيم، لا جوع فيه ولا تعب. لكنه كان وحده، فخلق الله له زوجته حواء، لتكون سكنًا له، فاطمأن قلبه بها، وعاشا في سعادةٍ وسكينة.
+قال الله لهما: "اسكنا الجنة وكلا منها رغدًا حيث شئتما، ولا تقربا هذه الشجرة فتكونا من الظالمين". كان أمرًا واضحًا، وتحذيرًا رحيمًا، لكن الشيطان لم يتركهما في سلام.
+بدأ إبليس يوسوس لهما، يزين لهما المعصية، ويخدعهما بالكلام، فقال: "هل أدلكما على شجرة الخلد وملكٍ لا يبلى؟" وأقسم لهما كذبًا أنه ناصحٌ لهما. ضعُف الإنسان أمام الإغراء، ونسي التحذير، فأكلا من الشجرة.
+في تلك اللحظة، تبدّل كل شيء… انكشفت لهما عوراتهما، وشعرا بالندم والخوف، وبدآ يخصفان عليهما من أوراق الجنة ليسترَا نفسيهما. أدركا أنهما أخطآ، وأنهما خالفا أمر الله.
+ناداهما الله برحمةٍ وعتاب: "ألم أنهكما عن تلكما الشجرة؟" فانهار آدم وزوجته ندمًا، ولم يكابرا، بل اعترفا بخطئهما وقالا: "ربنا ظلمنا أنفسنا، وإن لم تغفر لنا وترحمنا لنكونن من الخاسرين".
+فكانت هذه أول توبة في تاريخ البشر… توبة صادقة خرجت من قلبٍ منكسر، فقبلها الله برحمته، وغفر لهما.
+لكن كان لا بد من بدايةٍ جديدة، فأمرهما الله بالنزول إلى الأرض، لتكون مكان حياتهما واختبارهما، وقال لهما إن الشيطان عدوٌ لهما ولذريتهما، وإن من يتبع هدى الله فلن يضل ولن يشقى.
+نزل آدم وزوجته إلى الأرض، وبدأت رحلة البشر، رحلة فيها تعب وسعي، وفيها خير وشر، وفيها اختبار دائم. تعلّم آدم كيف يعيش، وكيف يزرع ويأكل، وتعلّم كيف يتوب كلما أخطأ، فكان مثالًا للإنسان الذي يخطئ ثم يعود إلى ربه.
+ومن نسل آدم بدأت البشرية كلها، وانتشر الناس في الأرض، يحملون داخلهم نفس الصراع: بين الخير والشر، بين طاعة الله ووسوسة الشيطان.
+وهكذا كانت قصة آدم عليه السلام بداية كل شيء… بداية الإنسان، وبداية الاختبار، وبداية الرحلة الطويلة نحو الله.`
+    },
+    "noah": {
+        img: "https://files.catbox.moe/mr04dk.jpg",
+        audio: "https://files.catbox.moe/1phfgj.mp3",
+        text: `في زمنٍ بعيد، حين بدأ الناس ينسون خالقهم ويبتعدون عن عبادته، أرسل الله نبيًا رحيمًا بقلبٍ صابر، هو نوح عليه السلام، ليعيدهم إلى طريق الحق. كان قومه يعبدون أصنامًا صنعوها بأيديهم، يطلقون عليها أسماءً مثل ود وسواع ويغوث، وظنوا أنها تقربهم إلى الله، فغابت عنهم الحقيقة.
+وقف نوح بينهم يناديهم بحبٍ وإخلاص: "يا قوم، اعبدوا الله ما لكم من إله غيره"، كان صوته مليئًا بالرحمة، وكلماته تحمل النجاة، لكنه لم يجد إلا القليل ممن يستجيب. مرّت الأيام والسنون، بل القرون، وهو يدعوهم بلا ملل، ليلًا ونهارًا، سرًا وجهارًا، يلين لهم القول مرة، ويجادلهم بالحكمة مرة أخرى، حتى بلغت دعوته تسعمائةٍ وخمسين عامًا، ومع ذلك أصرّ أكثرهم على العناد.
+كلما دعاهم، ازدادوا نفورًا، كانوا يضعون أصابعهم في آذانهم حتى لا يسمعوا، ويغطون وجوههم بثيابهم، ويسخرون منه ومن الذين آمنوا معه، قائلين: "ما نراك إلا بشرًا مثلنا، وما اتبعك إلا الذين هم أراذلنا". ومع كل سخرية، كان قلب نوح يزداد صبرًا، لكنه كان يتألم لأنهم يسيرون نحو الهلاك.
+وبعد هذا العمر الطويل من الدعوة، حين لم يبقَ في القوم أملٌ في الهداية، رفع نوح يديه إلى السماء وقال بحزن: "رب، لا تذر على الأرض من الكافرين ديارًا"، فاستجاب الله له، وأمره بأمرٍ عجيب لم يخطر له على بال.
+أوحى الله إليه أن يصنع سفينة عظيمة، فبدأ نوح يجمع الخشب ويصنعها بيده، في أرضٍ لا بحر فيها ولا نهر. مرّ به قومه وهم يضحكون ويستهزئون: "يا نوح، صرت نجارًا بعد أن كنت نبيًا؟ أتبني سفينة في الصحراء؟!"، فكان يرد عليهم بثبات: "إن تسخروا منا فإنا نسخر منكم كما تسخرون، فسوف تعلمون من يأتيه عذاب يخزيه".
+استمر في بناء السفينة حتى اكتملت، وجاء وعد الله الحق. فجأة، تغيّر كل شيء… السماء انفجرت بالمطر، والأرض تفجّرت بالماء، حتى من التنور خرج الماء، وارتفعت الأمواج كأنها جبال تتحرك. كان مشهدًا مرعبًا لم يشهد مثله البشر من قبل.
+أمر الله نوح أن يحمل في السفينة من كل نوعٍ من المخلوقات زوجين، وأن يصعد المؤمنون معه، وكانوا قلة، وأن يحمل أهله إلا من كفر. بدأت الرحلة، والسفينة تشق طريقها فوق أمواجٍ هائلة، تحمل النجاة لمن آمن.
+وفي وسط ذلك الطوفان، رأى نوح ابنه بعيدًا عنه، فصرخ بقلب الأب الحنون: "يا بني، اركب معنا ولا تكن مع الكافرين". لكن الابن، وقد غلبه الغرور، قال: "سآوي إلى جبل يعصمني من الماء". فرد نوح بحزن: "لا عاصم اليوم من أمر الله إلا من رحم". ولم تمضِ لحظات حتى حال بينهما الموج، فكان من الغارقين.
+اهتز قلب نوح ألمًا، لكنه سلّم لأمر الله، فعلم أن النجاة بالإيمان لا بالنسب، وأن القرب الحقيقي هو قرب القلب من الله.
+استمر الطوفان حتى غمرت المياه الأرض كلها، ثم جاء أمر الله: "يا أرض ابلعي ماءك، ويا سماء أقلعي"، فتوقّف المطر، وبدأت المياه تنحسر، حتى استقرّت السفينة على جبل الجودي، في لحظة سكونٍ بعد عاصفةٍ عظيمة.
+خرج نوح ومن معه إلى أرضٍ جديدة، وقد طُهرت من الكفر، وبدأت الحياة من جديد. ومن نسل نوح انتشر البشر مرة أخرى، لذلك سُمّي بأبي البشر الثاني.
+كانت قصته درسًا خالدًا في الصبر، وفي الثبات على الحق، وفي أن طريق الإيمان قد يكون طويلًا وشاقًا، لكنه في النهاية طريق النجاة.`
+    },
+    "ibrahim": {
+        img: "https://files.catbox.moe/0lpz08.jpg",
+        audio: "https://files.catbox.moe/hq9gi9.mp3",
+        text: `في زمنٍ كانت الأرض تمتلئ بالضلال، وكان الناس يعبدون الأصنام والنجوم والكواكب، أرسل الله نبيًا عظيمًا، قويَّ الإيمان، ثابت القلب، هو إبراهيم عليه السلام. نشأ إبراهيم في بيئةٍ غارقة في الشرك، حتى إن أباه كان يصنع الأصنام بيده، ويبيعها للناس، لكن قلب إبراهيم منذ صغره كان يبحث عن الحقيقة.
+
+كان ينظر إلى ما حوله ويتساءل: كيف تعبدون ما تصنعونه بأيديكم؟ كيف يكون هذا إلهًا؟ لم يقتنع بعادات قومه، فبدأ رحلة تفكيرٍ عميقة ليصل إلى ربه. نظر إلى نجمٍ في السماء وقال: "هذا ربي"، فلما غاب قال: "لا أحب الآفلين". ثم نظر إلى القمر، ثم الشمس، وكلما غابت أدرك أنها لا تصلح أن تكون إلهًا، حتى أعلن بقلبٍ يقين: إن الله هو خالق كل شيء، الذي لا يغيب ولا يزول.
+
+وقف إبراهيم في قومه يدعوهم إلى عبادة الله وحده، وترك الأصنام، لكنهم رفضوا دعوته، بل سخروا منه، حتى أبوه نفسه عارضه وهدده. ومع ذلك، لم يتراجع، بل ظل ثابتًا، يناقشهم بالحجة والعقل.
+
+وفي يومٍ قرر أن يواجه باطلهم بالفعل، فدخل على الأصنام في معبدهم، وكسرها جميعًا، إلا الصنم الكبير، وعلّق الفأس عليه. وعندما عاد قومه ورأوا ما حدث، غضبوا بشدة، وسألوا: "من فعل هذا بآلهتنا؟" فقال إبراهيم بهدوء: "بل فعله كبيرهم هذا، فاسألوهم إن كانوا ينطقون". فصمتوا لحظة، وشعروا بالحق، لكنهم عادوا إلى عنادهم.
+
+قرروا أن يعاقبوه عقابًا شديدًا، فجمعوا حطبًا عظيمًا، وأشعلوا نارًا لم يروا مثلها من قبل، حتى إنهم لم يستطيعوا الاقتراب منها، فبنوا منجنيقًا ليقذفوا به إبراهيم في النار. وفي تلك اللحظة، كان إبراهيم وحده أمام هذا المصير، لكنه كان مطمئن القلب، واثقًا بربه.
+
+قُذف في النار، ولكن الله قال للنار: "يا نار كوني بردًا وسلامًا على إبراهيم"، فتحولت النار التي تحرق كل شيء إلى سلامٍ لا يؤذيه، وخرج منها سالمًا، فكانت معجزة عظيمة أظهرت قوة الله ونصره لعباده.
+
+بعد ذلك، ترك إبراهيم قومه، وهاجر في سبيل الله، باحثًا عن مكانٍ يعبد فيه ربه بحرية. وابتلاه الله ابتلاءات عظيمة، ليكون مثالًا للإيمان الكامل.
+
+ومن أعظم هذه الابتلاءات، أنه رُزق بولدٍ بعد سنوات طويلة من الانتظار، هو إسماعيل عليه السلام. فلما كبر الغلام واشتد عوده، رأى إبراهيم في المنام أنه يذبحه، ورؤيا الأنبياء حق. كان اختبارًا صعبًا لا يتخيله عقل، أن يذبح الإنسان ابنه الذي انتظره عمرًا طويلًا.
+
+لكنه لم يتردد، بل أخبر ابنه: "يا بني إني أرى في المنام أني أذبحك فانظر ماذا ترى"، فكان رد إسماعيل أعجب من القصة نفسها، قال بثبات: "يا أبتِ افعل ما تؤمر، ستجدني إن شاء الله من الصابرين".
+
+استسلما لأمر الله، ووضع إبراهيم السكين على عنق ابنه، وفي لحظة التنفيذ، ناداه الله أن قد صدّقت الرؤيا، وفداه بذبحٍ عظيم. فكان هذا الاختبار دليلًا على كمال الإيمان والتسليم.
+
+وبعد ذلك، أمر الله إبراهيم أن يترك زوجته هاجر وابنه إسماعيل في وادٍ قاحلٍ لا زرع فيه ولا ماء، عند بيت الله الحرام. كان قرارًا صعبًا، لكنه امتثل لأمر الله. تركهم ومضى، فقامت هاجر تبحث عن الماء بين الصفا والمروة، حتى فجّر الله لها بئر زمزم، فكانت رحمةً عظيمة، ونشأت الحياة في ذلك المكان.
+
+ثم عاد إبراهيم مع ابنه إسماعيل، وأمرهما الله ببناء الكعبة، فرفعا قواعدها وهما يدعوان: "ربنا تقبل منا إنك أنت السميع العليم". فكانا يبنيان بيتًا سيكون قبلة للمسلمين إلى يوم القيامة.
+
+عاش إبراهيم حياته كلها في طاعة الله، متنقلًا بين الابتلاءات، صابرًا ثابتًا، حتى جعله الله إمامًا للناس، وأطلق عليه لقب "خليل الله"، لقوة إيمانه وقربه من ربه.
+
+كانت قصة إبراهيم عليه السلام قصة قلبٍ لم يتعلّق إلا بالله، وقوةٍ في الحق لا تهتز، وتسليمٍ كامل لأمر الله، حتى في أصعب اللحظات.`
+    },
+    "mosa": {
+        img: "https://files.catbox.moe/moktqv.jpg",
+        audio: "https://files.catbox.moe/jpknof.mp3",
+        text: `قصة سيدنا موسى عليه السلام من أعظم وأقوى القصص اللي مليانة دروس عن الصبر والإيمان والنصر بعد الشدة
+
+في زمن بعيد، كان في ملك ظالم اسمه فرعون، كان بيحكم مصر بقوة وجبروت، وادّعى إنه إله، وكان بيستعبد بني إسرائيل ويذلهم، ويخليهم يشتغلوا في أشق الأعمال. وفي يوم، شاف حلم مخيف… شاف إن طفل من بني إسرائيل هيكبر ويكون سبب في زوال ملكه!
+
+خاف فرعون جدًا، وقرر يعمل حاجة قاسية جدًا… أمر بقتل كل مولود ذكر من بني إسرائيل! تخيّلي الرعب اللي عاشه الناس ساعتها… كل بيت فيه طفل كان في خطر.
+
+وفي وسط الظلام ده، كانت أم سيدنا موسى حامل… ولما ولدته، خافت عليه جدًا من جنود فرعون. لكن ربنا طمّن قلبها، وأوحى لها تعمل حاجة غريبة جدًا: تحط طفلها في صندوق، وتسيبه يمشي في نهر النيل!
+
+قلب الأم كان بيتقطع، بس إيمانها بربنا كان أقوى… وحطته فعلًا في النهر وهي بتقول: "يا رب أنا سلمتك ابني".
+
+والمعجزة حصلت… الصندوق وصل لحد قصر فرعون نفسه! ولقته زوجته آسية، وكانت امرأة طيبة، فحبت الطفل جدًا وقالت لفرعون: "لا تقتلوه، عسى أن ينفعنا أو نتخذه ولدًا". فوافق، وكبر موسى في قصر عدوه، في نفس المكان اللي كان المفروض يقتله!
+
+لكن سيدنا موسى ما كانش بيرضع من أي مرضعة، لحد ما ربنا رجّعه لأمه تاني من غير ما حد يعرف… وكده رجع لحضنها وهي مطمئنة.
+
+كبر موسى، وكان قوي وشجاع، وكان قلبه دايمًا مع المظلومين. وفي يوم، شاف رجل من بني إسرائيل بيتخانق مع واحد مصري، فدخل يدافع عنه، وضرب المصري ضربة واحدة من غير قصد فمات… خاف موسى جدًا، واستغفر ربنا.
+
+تاني يوم، لقى نفس الرجل بيطلب مساعدته تاني، ففهم موسى إنه بيوقعه في مشاكل، وفجأة عرف الناس باللي حصل، وبقى موسى في خطر! فواحد نصحه وقاله: "اهرب، القوم بيخططوا يقتلوك".
+
+فخرج موسى من مصر خائف، ماشي لوحده في الصحراء، لحد ما وصل لمدين. وهناك شاف بنتين واقفين بعيد عن الناس مستنيين يسقوا الغنم، فساعدهم، وبعدين قعد يدعي ربنا وهو تعبان وجوعان.
+
+البنتين رجعوا لأبوهم، وكان رجل صالح، فدعا موسى، ولما شاف أمانته وقوته، زوّجه واحدة من بناته، وخلاه يعيش معاه سنين.
+
+مرت الأيام، وفي يوم كان موسى راجع مع زوجته، شاف نار على جبل الطور… فراح لها، وهناك حصل أعظم حدث في حياته.
+
+ربنا ناداه وقال له: "يا موسى، إني أنا الله"، واختاره يكون نبي، وأمره يرجع لفرعون ويدعوه لعبادة الله.
+
+موسى خاف، وطلب من ربنا يقوّي قلبه، ويخلي أخوه هارون يساعده. فاستجاب له ربنا.
+
+رجع موسى لفرعون، وقال له بكل شجاعة: "أرسل معي بني إسرائيل"، لكن فرعون تكبر ورفض، وسخر منه.
+
+فأظهر موسى معجزات عظيمة بإذن الله… عصاه تتحول لثعبان، ويده تخرج بيضاء من غير سوء. لكن فرعون قال إن ده سحر، وجمع السحرة عشان يتحدوا موسى.
+
+في يوم الزينة، وقف السحرة قدام الناس، ورموا حبالهم وعصيهم فبانت كأنها ثعابين، فخاف الناس… لكن ربنا أمر موسى يرمي عصاه، فتحولت لثعبان حقيقي وابتلع كل اللي عملوه!
+
+السحرة فهموا الحقيقة فورًا… وسجدوا وقالوا: "آمنا برب موسى وهارون". فغضب فرعون جدًا، وهددهم، لكنهم ثبتوا على إيمانهم.
+
+بعد كده، ربنا عاقب فرعون وقومه بآيات كثيرة: الطوفان، الجراد، الدم… لكنهم كل مرة كانوا يرجعوا للكفر.
+
+وفي النهاية، أمر الله موسى يخرج ببني إسرائيل ليلًا. فهربوا، لكن فرعون وجيشه لحقوهم عند البحر… والناس خافت وقالوا: "إنا لمدركون!"
+
+لكن موسى كان واثق في ربنا وقال: "كلا، إن معي ربي سيهدين".
+
+وأمره الله يضرب البحر بعصاه… فانشق البحر طريقين، وكل طريق زي الجبل! وعدّى موسى وقومه بسلام.
+
+ولما دخل فرعون وجيشه وراهم، رجع البحر تاني، وغرق فرعون وهو بيقول في آخر لحظة إنه آمن… لكن بعد فوات الأوان.
+
+ونجّى الله موسى وبني إسرائيل، وبدأت مرحلة جديدة… لكن للأسف، رغم كل المعجزات، بعضهم ضعف إيمانهم، وطلبوا عبادة العجل، لكن موسى رجع ووجّههم، وفضل يدعوهم للحق.
+
+قصة سيدنا موسى بتعلمنا إن مهما كان الظلم قوي، ربنا أقوى… وإن الصبر والثقة بالله بيغيروا المستحيل.`
+    },
+    "youssef": {
+        img: "https://files.catbox.moe/tqeobt.jpg",
+        audio: "",
+        text: `كان سيدنا يعقوب عليه السلام يحب يوسف حبًا شديدًا، أكثر من أولاده الآخرين، فشعر إخوته بالغيرة والحسد منه. وكان يوسف عليه السلام جميل الهيئة، حسن الخلق، مؤمن بالله، ويطيع والده في كل شيء. وفي يومٍ من الأيام، رأى يوسف حلمًا عجيبًا، رأى فيه أحد عشر كوكبًا والشمس والقمر يسجدون له. فقص يوسف حلمه على والده، فقال له يعقوب: "يا بني، لا تقص حلمك على إخوتك، فسوف يأتينا الله بالخير، وهم سيحسدونك." كان يعقوب يعلم أن هذا الحلم له دلالة عظيمة، لكنه حذر يوسف من إظهار ما فيه لهم.
+ومع مرور الأيام، شعرت إخوته بالغيرة الشديدة من محبة أبيهم له. فخططوا للإيقاع به، فقالوا لبعضهم: "يوسف هذا كثير الكلام عن أحلامه، فلنقتله أو لنطرح به في غيابة البئر، ونرى ما يكون." ولكنهم بعد تفكير، قرروا أن لا يقتلوه، وإنما يطرحوه في بئر ليأخذه بعض القوافل. وفعلوا ذلك، وأخذوا ملابسه الملطخة بالدماء ليخبروه أبيهم أن الذئب أكله. حزن يعقوب حزنًا شديدًا، لكنه صبر واحتسب الأمر عند الله.
+وفي البئر، جاء تجار قادمين من بلاد الشام، وأخرجوا يوسف وبيع كعبد في مصر لإحدى الشخصيات المهمة. وهنا بدأت رحلة يوسف الطويلة في الطاعة والصبر، فهو دائمًا ما كان حريصًا على طاعة الله، محافظًا على نفسه من الفتن. خدم يوسف سيده بإخلاص وأمانة، وأصبح محبوبًا لما أبداه من صدق وأمانة. ولكن، جاءت امرأة سيده لتغويه، فرفض يوسف طلبها واستعاذ بالله، وأظهر قوة إيمانه وعفته، رغم شدّة الابتلاء.
+لكنها لم تتركه، فأتهمته زورًا أمام سيده، فحُكم عليه بالسجن ظلمًا. وفي السجن، لم يفقد يوسف إيمانه أو رجاءه في الله، بل كان دائم الدعاء والصبر. وهناك، تعرف على سجينين آخرين، وفسّر لهما أحلامهما، فتمكّن بفضل الله من إعطائهما تفسيرات دقيقة. وعندما خرج أحدهما من السجن، ذكر يوسف للملك عندما حلم الملك حلمًا لم يستطع أحد تفسيره.
+استدعى الملك يوسف لتفسير حلمه، ففسره يوسف بحكمة وصدق: "سوف تأتي سبع سنوات من الرخاء والخير، تعقبها سبع سنوات من القحط والمجاعة، فاخزنوا الطعام في سنوات الخير لتكون كافية في سنوات القحط." أعجب الملك بحكمة يوسف وفطنته، فجعله وزيرًا ومسؤولًا عن خزائن مصر وإدارة البلاد في سنوات القحط، وصار له سلطان كبير وكرامة عظيمة بين الناس.
+وفي تلك السنوات العصيبة، جاء إخوته إلى مصر طلبًا للطعام بسبب المجاعة التي أصابت بلادهم. لم يعرفوه في البداية، لكن يوسف عرفهم. بدلاً من الانتقام، ابتكر يوسف خطة لتعليمهم درسًا، وأرسل إليهم رسائل، واحتفظ ببعضهم كرهينة ليختبر صدقهم وتوبتهم. وعندما اعترفوا بأخطائهم واعترفوا بحسدهم وظلمهم له، كشف لهم عن هويته. اندهشوا وفرحوا، ودموع الفرح غمرتهم، وعاد يوسف إلى والده يعقوب عليه السلام، بعد أن طال الفراق سنوات.
+احتضن يعقوب ابنه يوسف بحرارة، وشكر الله على إعادة ابنه إليه سالمًا. ثم جاء يوسف ببقية إخوته إلى مصر، واستقروا جميعًا بسلام. وهكذا، أصبح يوسف عليه السلام قائدًا حكيمًا في مصر، مملوءًا بالتقوى والصبر، وصارت حياته مثالًا على الصبر والثقة بالله، والغفران، والرحمة، والإيمان القوي في مواجهة المحن والابتلاءات.
+لقد علمتنا قصة يوسف أن الصبر على الابتلاء، والتقوى، والأمانة، والثقة بالله، يمكن أن تحول الشدائد إلى أعظم الانتصارات، وأن الخير والعدل دائمًا ينتصران في النهاية.`
+    }
+    // تقدر تضيف باقي الأنبياء بنفس الطريقة (يوسف، موسى، عيسى، محمد)
+};    
+// 2. الوظيفة اللي بتشغل الصفحة وتجيب البيانات
+function loadExternalStory(id) {
+    if (!id) return; // لو مفيش اختيار متعملش حاجة
+
+    const content = document.getElementById('libraryContent');
+    const loader = document.getElementById('lib-loader');
+    
+    // إخفاء المحتوى وإظهار علامة التحميل (اللودر)
+    content.style.display = 'none';
+    loader.style.display = 'block';
+
+    // البحث عن بيانات النبي في المصفوفة اللي فوق
+    const data = storiesDatabase[id];
+    
+    if (data) {
+        // تحديث الصورة
+        document.getElementById('lib-img').src = data.img;
+        
+        // تحديث الصوت وإعادة تحميله
+        const audioElement = document.getElementById('lib-audio');
+        audioElement.src = data.audio;
+        audioElement.load(); 
+
+        // تحديث النص
+        document.getElementById('lib-text').innerText = data.text;
+
+        // إظهار المحتوى بعد ثانية واحدة عشان شكل التحميل يبان
+        setTimeout(() => {
+            loader.style.display = 'none';
+            content.style.display = 'block';
+        }, 1000);
+    } else {
+        loader.style.display = 'none';
+        alert("هذه القصة سيتم إضافتها قريباً إن شاء الله");
+    }
+}
+
+// 3. وظيفة إيقاف الصوت عند الخروج من الصفحة
+function stopLibAudio() {
+    const audio = document.getElementById('lib-audio');
+    if(audio) {
+        audio.pause();
+        audio.currentTime = 0;
+    }
+}
+const dreamsData = [
+    { item: "الفرخ الصغير", meaning: "بداية جديدة أو براءة" },
+    { item: "الضفدع", meaning: "تغيير مفاجئ أو فرصة" },
+    { item: "السلحفاة", meaning: "صبر وثبات" },
+    { item: "الثعبان الكبير", meaning: "عدو قوي أو مشكلة كبيرة" },
+    { item: "العقرب", meaning: "حذر أو شخص مؤذي" },
+    { item: "العنكبوت الكبير", meaning: "مشاكل معقدة أو مخاوف" },
+    { item: "البعوض", meaning: "إزعاجات صغيرة أو توتر" },
+    { item: "الصرصور", meaning: "قلق أو أشياء مزعجة" },
+    { item: "الدعسوقة", meaning: "حظ وفير أو بشرة خير" },
+    { item: "النملة", meaning: "تعب أو جهد صغير يؤدي لنتيجة" },
+    { item: "النحلة", meaning: "عمل أو نشاط مثمر" },
+    { item: "الفراشة", meaning: "تحول أو تغيير إيجابي" },
+    { item: "الحلزون", meaning: "بطء في الإنجاز أو صبر" },
+    { item: "الصدف", meaning: "مفاجأة صغيرة أو كنز مخفي" },
+    { item: "الأخطبوط", meaning: "صعوبات معقدة أو شخص متحكم" },
+    { item: "السمكة", meaning: "رزق أو أخبار جيدة" },
+    { item: "السمكة الذهبية", meaning: "أمنية تتحقق أو حظ كبير" },
+    { item: "السلطعون", meaning: "عائق أو مشكلة مؤقتة" },
+    { item: "الحوت", meaning: "قوة كبيرة أو حدث مهم" },
+    { item: "الدلفين", meaning: "مساعدة أو هدوء وفرح" },
+    { item: "الحوت الصغير", meaning: "بداية نجاح صغير" },
+    { item: "الأمواج العاتية", meaning: "ضغوط ومشاكل كبيرة" },
+    { item: "النهر", meaning: "سريان الحياة أو تغيير مستمر" },
+    { item: "الجبال العالية", meaning: "صعوبات كبيرة تتطلب صبر" },
+    { item: "الجبل الصغير", meaning: "تحديات بسيطة" },
+    { item: "البركان", meaning: "غضب أو أحداث مفاجئة" },
+    { item: "شروق الشمس", meaning: "أمل وبداية جديدة" },
+    { item: "غروب الشمس", meaning: "نهاية مرحلة وبداية أخرى" },
+    { item: "الفجر", meaning: "بداية خير وبركة" },
+    { item: "السماء المرصعة بالنجوم", meaning: "أمنيات تتحقق أو رؤية مستقبلية" },
+    { item: "النجم الساقط", meaning: "أمنية تتحقق بسرعة" },
+    { item: "الشمس الساطعة", meaning: "طاقة إيجابية ونجاح" },
+    { item: "الشمس جزئياً", meaning: "نجاح جزئي أو أمل محدود" },
+    { item: "المطر", meaning: "خير وبركة أو نزول رزق" },
+    { item: "العاصفة", meaning: "مشاكل أو صعوبات قوية" },
+    { item: "قوس قزح بعد المطر", meaning: "فرج وأمل بعد ضيق" },
+    { item: "البرق مع الرعد", meaning: "حدث مفاجئ قوي" },
+    { item: "الثلج", meaning: "هدوء أو برودة في العلاقات" },
+    { item: "الغيوم", meaning: "تفكير أو حيرة" },
+    { item: "الإعصار", meaning: "مشاكل شديدة أو تغير مفاجئ" },
+    { item: "الرياح القوية", meaning: "ضغط أو أحداث سريعة" },
+    { item: "نسيم لطيف", meaning: "راحة وسعادة" },
+    { item: "النار الكبيرة", meaning: "فتنة أو خطر" },
+    { item: "النار الصغيرة", meaning: "مشكلة بسيطة" },
+    { item: "الخيمة", meaning: "فترة مؤقتة أو مرحلة جديدة" },
+    { item: "البيت المهدم", meaning: "فقدان أو مرحلة صعبة" },
+    { item: "البيت الجميل", meaning: "استقرار وراحة" },
+    { item: "المنزل الريفي", meaning: "هدوء وسعادة عائلية" },
+    { item: "القصر الكبير", meaning: "مكانة ورفاهية" },
+    { item: "القصر الشرقي", meaning: "حكم أو سلطة" },
+    { item: "الملعب الكبير", meaning: "منافسة أو تحدي" },
+    { item: "عجلة الملاهي", meaning: "متعة أو أحداث متكررة" },
+    { item: "الأفعوانية", meaning: "تقلبات الحياة" },
+    { item: "الخيل الدوارة", meaning: "متعة قصيرة أو تجربة ممتعة" },
+    { item: "الطريق الطويل", meaning: "رحلة أو حياة طويلة مليئة بالتحديات" },
+    { item: "الباب المفتوح", meaning: "فرصة جديدة أو بداية" },
+    { item: "الباب المغلق", meaning: "صعوبة أو عائق" },
+    { item: "المفتاح الكبير", meaning: "حل مشكلة مهمة" },
+    { item: "القفل الصغير", meaning: "سر أو منع شيء" },
+    { item: "السرير", meaning: "راحة أو تعب يحتاج للاستراحة" },
+    { item: "الأريكة", meaning: "هدوء واستراحة" },
+    { item: "اللوحة الفنية", meaning: "إبداع أو رؤية مستقبلية" },
+    { item: "المرآة الكبيرة", meaning: "تقييم النفس أو التفكير الداخلي" },
+    { item: "الرسم", meaning: "إبداع أو مشروع جديد" },
+    { item: "ألوان كثيرة", meaning: "أفكار أو مشاعر متنوعة" },
+    { item: "المسرح", meaning: "موقف اجتماعي أو تقمص شخصية" },
+    { item: "الفيلم الطويل", meaning: "أحداث حياتك أو مواقف متكررة" },
+    { item: "الكاميرا", meaning: "مراقبة أو ذكرى" },
+    { item: "الصور القديمة", meaning: "ذكريات أو حنين للماضي" },
+    { item: "الموسيقى الجميلة", meaning: "فرح أو مشاعر إيجابية" },
+    { item: "الغناء", meaning: "تعبير عن مشاعر أو ثقة بالنفس" },
+    { item: "السماعات", meaning: "هدوء أو عزلة" },
+    { item: "الراديو", meaning: "أخبار أو معلومات مهمة" },
+    { item: "الهاتف", meaning: "اتصال أو أخبار" },
+    { item: "الكمبيوتر", meaning: "دراسة أو عمل" },
+    { item: "الشاشة", meaning: "وضوح أمور أو متابعة" },
+    { item: "الطابعة", meaning: "إنتاج أو إتمام مشروع" },
+    { item: "الكتابة", meaning: "فكرة أو خطة" },
+    { item: "الكتب", meaning: "علم أو نصيحة" },
+    { item: "الملصق", meaning: "علامة أو تلميح" },
+    { item: "الهدايا", meaning: "رزق أو مفاجأة" },
+    { item: "الرسائل", meaning: "أخبار أو اتصال مهم" },
+    { item: "الرسالة الإلكترونية", meaning: "أخبار حديثة" },
+    { item: "الطرد", meaning: "مفاجأة أو شيء جديد" },
+    { item: "الكأس", meaning: "نجاح أو تكريم" },
+    { item: "الميدالية الذهبية", meaning: "إنجاز أو فخر" },
+    { item: "الهدف", meaning: "تركيز أو تحقيق رغبة" },
+    { item: "السهم", meaning: "هدف قوي أو تحدي" },
+    { item: "النرد", meaning: "حظ أو فرصة" },
+    { item: "اللغز", meaning: "حل مشكلة أو تحدي" },
+    { item: "الدرع", meaning: "حماية أو دفاع" },
+    { item: "السيف", meaning: "مواجهة أو شجاعة" },
+    { item: "الخنجر", meaning: "خيانة أو خطر" },
+    { item: "البوصلة", meaning: "اتخاذ قرار أو اختيار طريق" },
+    { item: "الساعة", meaning: "وقت مناسب للفرج أو الانتظار" },
+    { item: "الساعة الرملية", meaning: "نهاية مرحلة أو انتظار" },
+    { item: "الوردة", meaning: "حب أو علاقة جميلة" },
+    { item: "الزهرة الجميلة", meaning: "خير وفرح" },
+    { item: "الزهرة النادرة", meaning: "نعمة أو فرصة" },
+    { item: "رؤية الكعبة", meaning: "خير عظيم، يقربك من الله، دعاء مستجاب، رزق وبركة" },
+    { item: "الثعبان", meaning: "يدل على عدو أو شخص حاسد" },
+    { item: "الماء", meaning: "خير ورزق وراحة نفسية، صافي = طمأنينة، متعكر = مشاكل" },
+    { item: "البكاء", meaning: "بدون صوت = فرج، بصوت عالي = هم أو ضغط" },
+    { item: "الموت", meaning: "بداية جديدة أو تغيير كبير، مش الموت الحقيقي" },
+    { item: "الطيران", meaning: "طموح وحرية، ممكن يدل على سفر" },
+    { item: "السقوط", meaning: "خوف أو فقدان سيطرة، قلق من شيء في حياتك" },
+    { item: "الهروب", meaning: "هروب من مشكلة أو ضغط نفسي" },
+    { item: "سقوط الأسنان", meaning: "قلق أو فقدان شيء مهم" },
+    { item: "النار", meaning: "مشاكل أو فتنة، أو تحذير" },
+    { item: "البحر", meaning: "الحياة والدنيا، هادئ = خير، هائج = مشاكل" },
+    { item: "البيت", meaning: "الأمان والاستقرار، حالته = حالتك النفسية" },
+    { item: "شخص معروف", meaning: "تفكيرك فيه أو علاقة بينكم" },
+    { item: "الطفل", meaning: "بداية جديدة، خير ورزق" },
+    { item: "المال", meaning: "رزق أو مسؤوليات" },
+    { item: "الحشرات", meaning: "ناس مزعجة أو مشاكل صغيرة" },
+    { item: "الكلب", meaning: "صديق أو عدو حسب الحلم" },
+    { item: "الأسد", meaning: "عدو قوي أو قوة شخصية" },
+    { item: "البقرة", meaning: "رزق أو خير أو نعمة قادمة" },
+    { item: "البط", meaning: "وفرة ورزق" },
+    { item: "البومة", meaning: "تحذير أو خبر صادم" },
+    { item: "الشجرة", meaning: "ثبات واستقرار أو نجاح" },
+    { item: "التفاح", meaning: "خير أو رزق أو نجاح" },
+    { item: "الخبز", meaning: "رزق وبركة" },
+    { item: "المفتاح", meaning: "حل مشكلة أو فرصة جديدة" },
+    { item: "المسجد", meaning: "قرب من الله وطمأنينة" },
+    { item: "الطائرة", meaning: "سفر أو طموح" },
+    { item: "السيارة", meaning: "حياتك أو مشروعك، طريقك ومستقبلك" },
+    { item: "الطيور", meaning: "أخبار أو أخبار سارة" },
+    { item: "النجوم", meaning: "أمنيات تتحقق أو نجاح" },
+    { item: "الشمس", meaning: "خير ونجاح وطاقة إيجابية" },
+    { item: "القمر", meaning: "راحة نفسية وطمأنينة" },
+    { item: "البرق", meaning: "مفاجأة قوية أو حدث صادم" },
+    { item: "الرياح الشديدة", meaning: "مشاكل أو ضغط" },
+    { item: "الملابس", meaning: "حالتك النفسية أو انطباعك عن نفسك" },
+    { item: "الحقيبة", meaning: "مسؤوليات أو مشروعات" },
+    { item: "الشاطئ", meaning: "استرخاء أو راحة أو فرصة سفر" },
+    { item: "الجدار", meaning: "عائق أو مشكلة تواجهك" },
+    { item: "السفينة", meaning: "رحلة أو مشروع طويل" },
+    { item: "الميدالية", meaning: "نجاح أو تحقيق إنجاز" },
+    { item: "الرياضة", meaning: "قوة أو تدريب" },
+    { item: "السباحة", meaning: "تخطي الصعاب أو تحديات" },
+    { item: "الدراجة", meaning: "نشاط أو تطور في الحياة" },
+    { item: "الحصان", meaning: "قوة وحركة أو مساعدة" },
+    { item: "الثور", meaning: "قوة أو مشكلة كبيرة" },
+    { item: "الفيل", meaning: "حكمة أو صبر أو مسؤولية كبيرة" },
+    { item: "النمر", meaning: "خصم قوي أو شجاعة" },
+    { item: "الفهد", meaning: "سرعة أو إنجاز سريع" },
+    { item: "الأرنب", meaning: "حذر أو فرصة صغيرة" },
+    { item: "السنجاب", meaning: "جمع أو تخطيط" },
+    { item: "الغزال", meaning: "جمال أو نعمة" },
+    { item: "الكبش", meaning: "مواجهة أو تحدي" },
+    { item: "الغنم", meaning: "رزق أو خير" },
+    { item: "الماعز", meaning: "مشاكل صغيرة أو خيال" },
+    { item: "الديك", meaning: "بداية يوم أو أخبار" },
+    { item: "الدجاجة", meaning: "حماية أو حذر" },
+    { item: "الديك الرومي", meaning: "رزق أو مكانة" }
+];
+
+// وظيفة عرض القائمة خبطة واحدة
+function displayDreams() {
+    const list = document.getElementById('dreamsList');
+    if (!list) return;
+    
+    let html = "";
+    dreamsData.forEach(dream => {
+        html += `
+            <div style="padding: 12px; border-bottom: 1px solid #eee; text-align: right;">
+                <strong style="color: #7b1fa2;">✨ ${dream.item}:</strong> 
+                <span style="color: #444;">${dream.meaning}</span>
+            </div>`;
+    });
+    list.innerHTML = html;
+}
+
+// تعديل دالة showPage لتشغيل العرض تلقائياً
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const activePage = document.getElementById(pageId);
+    if (activePage) {
+        activePage.classList.add('active');
+        window.scrollTo(0,0);
+        
+        // لو فتح صفحة الأحلام.. املأها فوراً
+        if (pageId === 'dreamsPage') {
+            displayDreams();
+        }
+    }
+}
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js")
+    .then(() => console.log("Service Worker Registered"));
+}
+</script>
+
+</body>
+</html>
